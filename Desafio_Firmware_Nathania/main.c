@@ -24,21 +24,28 @@ const int motorPort =  PORTD7;
 bool buttonState = 0;
 const int turnOffMilliseconds = 10000;
 
+int setbit(int number, int position) {
+	return number | (1 << position);
+}
+
+int unsetbit(int number, int position) {
+	return number & ~(1 << position);
+}
 
 int main(void) {
-	DDRD &= ~(1 << buttonDirection);
-	DDRD |=  (1 << motorDirection);
+	DDRD = unsetbit(DDRD, buttonDirection);
+	DDRD = setbit(DDRD, motorDirection);
 	PORTD = 0;
 		
     while (1) {
 		buttonState = (PIND & (1 << buttonPin));
 
 		if (buttonState == 1) {
-			PORTD |= (1 << motorPort);
+			PORTD = setbit(PORTD, motorPort);
 
 			_delay_ms(turnOffMilliseconds);
 
-			PORTD &= ~(1 << motorPort); 
+			PORTD = unsetbit(PORTD, motorPort); 
 		}
     }
 }
